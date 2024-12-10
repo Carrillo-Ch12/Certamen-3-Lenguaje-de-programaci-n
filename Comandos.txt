@@ -1,0 +1,2 @@
+awk -f S.awk page.data > indice_invertido.txt
+python3 Script.py

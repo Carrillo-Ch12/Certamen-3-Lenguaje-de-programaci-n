@@ -22,4 +22,4 @@ def remover_stopwords(archivo_entrada, archivo_salida):
             salida.write(' '.join(palabras_filtradas) + '\n')
 
 # Uso
-remover_stopwords('indice_invertido.txt', 'indice_sin_stopwords.txt')
+remover_stopwords('contenido.txt', 'indice_invertido_sinstopwords.txt')
