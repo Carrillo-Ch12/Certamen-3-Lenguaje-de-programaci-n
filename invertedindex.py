@@ -89,6 +89,7 @@ leer_texto('C:/Users/diegh/Universidad2doSemestre/certamen3LP/Certamen-3-Lenguaj
 indice_invertido = crear_indice_invertido(indice)
 
 
+
 # Procesar las consultas y guardar los resultados
 procesar_consultas('C:/Users/diegh/Universidad2doSemestre/certamen3LP/Certamen-3-Lenguaje-de-programaci-n/consultas.txt', indice_invertido, urls)
 
