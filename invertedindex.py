@@ -1,6 +1,5 @@
 import nltk
 nltk.download('punkt')
-import json
 import re
 from collections import defaultdict
 from nltk.tokenize import word_tokenize
@@ -31,16 +30,16 @@ def crear_indice_invertido(documentos):
                 indice[token].append(doc_id)
     return indice
 
-def remplazar_urls(indice, urls):
-    nuevo_indice = defaultdict(list)
-    for clave, lista_indices in indice.items():
-        for idx in lista_indices:
-            if idx < len(urls):
-                nuevo_indice[clave].append(urls[idx])
-    
-    return nuevo_indice
+def interseccionar_listas(terminos, indice, i=0):
+    if i == len(terminos):  
+        return set(range(len(indice))) 
 
-  
+    termino = terminos[i]
+    if termino in indice:  
+        documentos_termino = set(indice[termino])
+        return documentos_termino & interseccionar_listas(terminos, indice, i + 1) 
+    else:
+        return set() 
 
 indice = []
 leer_texto('C:/Users/diegh/Universidad2doSemestre/certamen3LP/Certamen-3-Lenguaje-de-programaci-n/indice_invertido_sinstopwords.txt', indice)
@@ -50,17 +49,14 @@ leer_texto('C:/Users/diegh/Universidad2doSemestre/certamen3LP/Certamen-3-Lenguaj
 
 indice_invertido = crear_indice_invertido(indice)
 
+consulta = input("Introduce los términos de búsqueda separados por espacio: ")
+terminos = consulta.split()
 
-indice_invertido = remplazar_urls(indice_invertido, urls)
-
-print(indice_invertido)
-
-
+resultados = interseccionar_listas(terminos, indice_invertido)
 
 
+resultados_urls = [urls[doc_id] for doc_id in resultados]
 
+print(f"Documentos que contienen todos los términos (URLs): {resultados_urls}")
 
-indice_json = json.dumps(indice_invertido)
-with open('inverted_index.json', 'w') as f:
-    f.write(indice_json)
 
