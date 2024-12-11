@@ -1,2 +1,2 @@
-awk -f S.awk page.data > indice_invertido.txt
+awk -f S.awk pages.dat
 python3 Script.py
