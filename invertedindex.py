@@ -4,30 +4,16 @@ import re
 from collections import defaultdict
 from nltk.tokenize import word_tokenize
 
-
-def leer_texto(path, lista):
+def leer_indice_invertido(path):
+    indice = defaultdict(list)
     with open(path, 'r') as archivo:
         lineas = archivo.readlines()
-
-    lista.extend([linea.strip() for linea in lineas])
-
-
-def limpiar_texto(texto):
-    texto = re.sub(r'[^\w\s]', '', texto)
-    texto = texto.lower()
-    return texto
-
-def tokenizar(texto):
-    texto = limpiar_texto(texto)
-    return word_tokenize(texto)
-
-def crear_indice_invertido(documentos):
-    indice = defaultdict(list) 
-    for doc_id, doc in enumerate(documentos):
-        tokens = tokenizar(doc)
-        for token in tokens:
-            if doc_id not in indice[token]:  
-                indice[token].append(doc_id)
+        for linea in lineas:
+            partes = linea.strip().split()
+            if len(partes) > 1:  
+                palabra = partes[0]
+                ids = list(map(int, partes[1:]))  
+                indice[palabra].extend(ids)
     return indice
 
 def interseccionar_listas(terminos, indice, i=0):
@@ -41,9 +27,7 @@ def interseccionar_listas(terminos, indice, i=0):
     else:
         return set() 
 
-
 def procesar_consultas(archivo_consultas, indice_invertido, urls):
-    # Abrimos el archivo de consultas
     with open(archivo_consultas, 'r', encoding='utf-8') as f:
         consultas = f.readlines()
 
@@ -54,7 +38,7 @@ def procesar_consultas(archivo_consultas, indice_invertido, urls):
         resultados = interseccionar_listas(terminos, indice_invertido)
         print(f"Resultados (índices de documentos): {resultados}")  
         if resultados:
-            resultados_urls = [urls[doc_id] for doc_id in resultados]
+            resultados_urls = [urls[doc_id] for doc_id in resultados if 0 <= doc_id < len(urls)]
             print(f"Documentos que contienen todos los términos (URLs): {resultados_urls}")  
         else:
             resultados_urls = []
@@ -68,11 +52,11 @@ def procesar_consultas(archivo_consultas, indice_invertido, urls):
             else:
                 out_file.write("No se encontraron documentos que contengan todos los términos.\n")
         print(f"Resultados de la consulta {i+1} guardados en: {archivo_resultados}")       
-indice = []
-leer_texto('C:/Users/diegh/Universidad2doSemestre/certamen3LP/Certamen-3-Lenguaje-de-programaci-n/indice_invertido_sinstopwords.txt', indice)
+
+indice_invertido = leer_indice_invertido('C:/Users/diegh/Universidad2doSemestre/certamen3LP/Certamen-3-Lenguaje-de-programaci-n/indice_invertido_sinstopwords.txt')
+
 urls = []
-leer_texto('C:/Users/diegh/Universidad2doSemestre/certamen3LP/Certamen-3-Lenguaje-de-programaci-n/urls.txt', urls)
-indice_invertido = crear_indice_invertido(indice)
+with open('C:/Users/diegh/Universidad2doSemestre/certamen3LP/Certamen-3-Lenguaje-de-programaci-n/urls.txt', 'r', encoding='utf-8') as archivo:
+    urls = [linea.strip() for linea in archivo]
+
 procesar_consultas('C:/Users/diegh/Universidad2doSemestre/certamen3LP/Certamen-3-Lenguaje-de-programaci-n/consultas.txt', indice_invertido, urls)
-
-
